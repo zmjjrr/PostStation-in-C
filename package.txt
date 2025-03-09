@@ -1,0 +1,12 @@
+PACKAGE BEGIN
+Id:1
+weight:10
+Transport:0
+Cost:10
+Status:1
+Sender:zjr
+Receiver:zjr
+Info:oooi
+PACKAGE END
+
+End Of Packages

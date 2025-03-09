@@ -1,0 +1,11 @@
+USER BEGIN
+Userid:1
+Privilege:0
+Level:0
+Username:zjr
+Password:0Oo
+Phone:00000000000
+Info:
+USER END
+
+End Of Users
