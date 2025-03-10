@@ -55,8 +55,9 @@ int package_ctrl();//包裹管理
 
 void inform_user(user*);//通知用户
 int pick_package();//用户取包裹
-void print_menu();//打印菜单
-
+void default_menu();
+void admin_menu();
+void user_menu();
 
 void constructor();//程序启动时初始化链表
 void destructor();//程序结束时保存链表到文件

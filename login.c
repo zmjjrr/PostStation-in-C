@@ -16,7 +16,7 @@ static int postman_id = 1;
 // 密码验证
 static user* password(user* newman) {
     while (1) {
-        printf("please input your password(must include num,words(include lower and supper),less than 20): ");
+        printf("请输入君の名字(必须包含数字，大小写字母): ");
         fgets(newman->password, MAX_PASSWD_LEN, stdin);
         // 去除换行符
         size_t len = strlen(newman->password);
@@ -42,7 +42,7 @@ static user* password(user* newman) {
             break;
         }
         else {
-            printf("your password is so low,please try again\n");
+            printf("你的密码太逊了，请再次输入\n");
             memset(newman->password, 0, sizeof(newman->password));
         }
     }
@@ -93,5 +93,5 @@ extern user* user_head;
 user* login()
 {
     return _login(user_head);
-    //return a randomized authentication token?
+    //return a randomized authentication token? 
 }

@@ -1,9 +1,19 @@
 USER BEGIN
 Userid:1
+Privilege:1
+Level:0
+Username:user
+Password:user
+Phone:00000000000
+Info:
+USER END
+
+USER BEGIN
+Userid:1
 Privilege:0
 Level:0
-Username:zjr
-Password:0Oo
+Username:admin
+Password:admin
 Phone:00000000000
 Info:
 USER END
