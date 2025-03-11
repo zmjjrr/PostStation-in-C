@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include<string.h>
 #include<stdlib.h>
+#include<time.h>
 #include"common.h"
 
 package *package_head = NULL;
@@ -123,6 +124,10 @@ static int writeUserToFile(user *ptr,FILE* fp)
 void constructor()
 {
     CreateFile();//create file if not exist
+
+    // keygen();
+    printf("result:%d\n",keycheck("4oUGr34CyPKCDC1yZfG9htGP2fEHpMt8"));
+
     puts("Initiating packages...\n");
     FILE* package_fp = fopen("package.txt","r");
     package *package_ptr = package_head;
@@ -223,6 +228,11 @@ void CreateFile()
         return;
     }
     fclose(fp);
+    fp = fopen("key.txt","a+");
+    if (fp == NULL) {
+        perror("Error opening key.txt");
+        return;
+    }
 }
 
 void save_packages()
@@ -269,4 +279,109 @@ void save_users()
     fprintf(user_fp,"End Of Users\n");
     fclose(user_fp);
     puts("Users saved.\n");
+}
+
+
+int keygen(char* str)
+{
+    srand(time(NULL));
+    char charset[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    FILE* fp = fopen("key.txt","a+");
+    if(fp == NULL)
+    {
+        perror("Error opening file");
+        return -1;
+    }
+    int index = 0,tmp = 0;
+    char buffer[0x100];
+    while(fgets(buffer,sizeof(buffer),fp) != NULL)//get max id
+    {
+        if(strstr(buffer,"Id:") != NULL)
+        {
+            sscanf(buffer,"Id:%d",&tmp);
+            if(tmp > index)
+            {
+                index = tmp;
+            }
+        }
+    }
+    index++;
+
+    char value[33];
+    for(int i = 0;i < 32;i++)
+    {
+        int random_index = rand() % strlen(charset);
+        value[i] = charset[random_index];
+    }
+    value[32] = '\0';
+    fprintf(fp,"Id:%d\n",index);
+    fprintf(fp,"Value:%s\n",value);
+    fclose(fp);
+    strcpy(str,value);
+    return 0;
+}
+int keycheck(char* str)
+{
+    FILE* fp = fopen("key.txt","r");
+    if(fp == NULL)
+    {
+        perror("Error opening file");
+        return -1;
+    }
+    char buffer[0x100];
+    int curId = 0;
+    int idToRemove = -1;
+    int found = 0;
+    char* tempfile = (char*)calloc(1,0x21000);
+    char* ptr = tempfile;
+    while(fgets(buffer,sizeof(buffer),fp)!= NULL)
+    {
+        if (strstr(buffer,"Id:")!= NULL)
+        {
+            sscanf(buffer,"Id:%d",&curId);
+
+            char value[33];
+            fgets(buffer, sizeof(buffer), fp);
+            sscanf(buffer,"Value:%s",value);
+            if(strcmp(value,str) == 0)
+            {
+                idToRemove = curId;
+                found = 1;
+                continue;
+            }
+            if (idToRemove != -1 && curId > idToRemove) 
+            {
+                // 更新 ID
+                sprintf(buffer, "Id:%d\n", curId - 1);
+                strcat(ptr, buffer);
+            } 
+            else
+            {
+                sprintf(buffer, "Id:%d\n", curId);
+                strcat(ptr, buffer);
+            }
+            sprintf(buffer, "Value:%s\n", value);
+            strcat(ptr, buffer);
+        }
+    }
+    fclose(fp);
+
+    if (found)
+    {
+        fp = fopen("key.txt", "w");
+        if (fp == NULL)
+        {
+            perror("Error opening file");
+            free(tempfile);
+            return -1;
+        }
+        fputs(tempfile, fp);
+        fclose(fp);
+        free(tempfile);
+    }
+    else
+    {
+        free(tempfile);
+    }
+    return found;
 }

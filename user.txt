@@ -28,4 +28,14 @@ Phone:99999999999
 Info:
 USER END
 
+USER BEGIN
+Userid:1
+Privilege:0
+Level:0
+Username:zmjjrr
+Password:o0O
+Phone:99999999999
+Info:
+USER END
+
 End Of Users

@@ -43,14 +43,23 @@ typedef struct user
     package packages[MAX_INFO_LEN];//一个用户所拥有的包裹
 }user;
 
+// typedef struct Key
+// {
+//     unsigned int id;
+//     char value[32];
+// }Key;
+
+
+
+
+
+
 
 user* login();//登录
 int regist();//注册
 
 
 int package_ctrl();//包裹管理
-// int create_package();//创建包裹
-// int search_package();//查询包裹状态
 
 
 void inform_user(user*);//通知用户
@@ -63,6 +72,9 @@ void constructor();//程序启动时初始化链表
 void destructor();//程序结束时保存链表到文件
 void save_packages();
 void save_users();
+
+int keycheck(char* str);
+int keygen(char* str);
 
 
 #endif

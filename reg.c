@@ -8,8 +8,6 @@ static int user_id = 1;
 static int admin_id = 1;
 static int postman_id = 1;
 
-#define key 114514
-
 #define next user_fd
 #define phone_str phone
 
@@ -116,10 +114,10 @@ user* build(user* head) {
         while (getchar() != '\n');
         if (p == 0) {
             printf("ÇëÊäÈëÑûÇëÂë\n");
-            int i;
-            scanf("%d", &i);
+            char s[33];
+            scanf("%s", s);
             while (getchar() != '\n');
-            if (i == key) {
+            if (keycheck(s)) {
                 newman->privilege = 0;
                 newman->userid = admin_id++;
                 break;

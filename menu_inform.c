@@ -56,8 +56,10 @@ void admin_menu() {
     printf("\t2.包裹管理系统\n");
     printf("\t3.修改个人信息\n");
     printf("\t4.注销\n");//注销
+    printf("\t5.生成邀请码\n");
     printf("***************************************\n");
     int choice = 0;
+    char keystr[33];
     scanf("%d", &choice);
     switch (choice) {
     case 1:
@@ -74,6 +76,10 @@ void admin_menu() {
         break;
     case 4:
         cur_user = NULL;
+        break;
+    case 5:
+        keygen(keystr);//pass a pointer to the char array
+        puts(keystr);
         break;
     default:
         printf("无效操作，请重新输入！\n");
