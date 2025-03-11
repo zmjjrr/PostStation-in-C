@@ -9,7 +9,6 @@ int main()
     constructor();
     while(1)
     {
-        default_menu:
         default_menu();
         int choice = 0;
         
@@ -36,6 +35,7 @@ int main()
             break;
         case 2:
             regist(); 
+            save_users();
             break;
         case 3:
             destructor();//make sure to call this before exit
@@ -46,5 +46,4 @@ int main()
         
 
     }
-    destructor();
 }

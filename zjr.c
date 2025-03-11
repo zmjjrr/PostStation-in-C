@@ -17,49 +17,10 @@ static void CreateFile();
 
 void constructor();
 void destructor();
+void save_packages();
+void save_users();
 
-// int main()//test drive
-// {
-//     constructor();
-    
-//     package *pptr = package_head;
-
-//     while(pptr != NULL)
-//     {
-//         printf("Id:%d\n",pptr->id);
-//         printf("weight:%d\n",pptr->weight);
-//         printf("Transport:%d\n",pptr->transport);
-//         printf("Cost:%d\n",pptr->cost);
-//         printf("Status:%d\n",pptr->status);
-//         printf("Sender:%s\n",pptr->sender_name);
-//         printf("Receiver:%s\n",pptr->receiver_name);
-//         printf("Info:%s\n",pptr->info);
-//         printf("-------------------------\n");
-//         pptr = pptr->package_fd; 
-//     }
-
-//     printf("packages printed\n");
-
-//     user *ptr = user_head;
-//     while(ptr != NULL)
-//     {
-//         printf("Userid:%d\n",ptr->userid);
-//         printf("Privilege:%d\n",ptr->privilege);
-//         printf("Level:%d\n",ptr->level);
-//         printf("Username:%s\n",ptr->username);
-//         printf("Password:%s\n",ptr->password);
-//         printf("Phone:%s\n",ptr->phone);
-//         printf("Info:%s\n",ptr->info);
-//         printf("-------------------------\n");
-//         ptr = ptr->user_fd;
-
-//     }
-//     // regist();
-//     // login();
-//     package_ctrl();
-//     destructor();
-//     return 0;
-// }
+static int linking_packages(user* ptr);
 
 static int readPackageFromFile(package *ptr,FILE* fp)
 {
@@ -228,45 +189,8 @@ void constructor()
 
 void destructor()
 {
-    puts("Saving packages ...\n");
-    package *package_ptr = package_head;
-
-    FILE* package_fp = fopen("package.txt","w");
-    if(package_fp == NULL)
-    {
-        perror("Error opening file");
-        return;
-    }
-
-    while(package_ptr != NULL)
-    {
-        writePackageToFile(package_ptr,package_fp);
-        package *temp = package_ptr;
-        package_ptr = package_ptr->package_fd;
-    }
-    fprintf(package_fp,"End Of Packages\n");
-    fclose(package_fp);
-    puts("Packages saved.\n");
-
-    puts("Saving users...\n");
-    user *user_ptr = user_head;
-
-    FILE* user_fp = fopen("user.txt","w");
-    if(user_fp == NULL)
-    {
-        perror("Error opening file");
-        return;
-    }
-
-    while(user_ptr!= NULL)
-    {
-        writeUserToFile(user_ptr,user_fp);
-        user *temp = user_ptr;
-        user_ptr = user_ptr->user_fd;
-    }
-    fprintf(user_fp,"End Of Users\n");
-    fclose(user_fp);
-    puts("Users saved.\n");
+    save_packages();
+    save_users();
 }
 
 static int linking_packages(user* user)
@@ -299,4 +223,50 @@ void CreateFile()
         return;
     }
     fclose(fp);
+}
+
+void save_packages()
+{
+    puts("Saving packages ...\n");
+    package *package_ptr = package_head;
+
+    FILE* package_fp = fopen("package.txt","w");
+    if(package_fp == NULL)
+    {
+        perror("Error opening file");
+        return;
+    }
+
+    while(package_ptr != NULL)
+    {
+        writePackageToFile(package_ptr,package_fp);
+        package *temp = package_ptr;
+        package_ptr = package_ptr->package_fd;
+    }
+    fprintf(package_fp,"End Of Packages\n");
+    fclose(package_fp);
+    puts("Packages saved.\n");
+}
+
+void save_users()
+{
+    puts("Saving users...\n");
+    user *user_ptr = user_head;
+
+    FILE* user_fp = fopen("user.txt","w");
+    if(user_fp == NULL)
+    {
+        perror("Error opening file");
+        return;
+    }
+
+    while(user_ptr!= NULL)
+    {
+        writeUserToFile(user_ptr,user_fp);
+        user *temp = user_ptr;
+        user_ptr = user_ptr->user_fd;
+    }
+    fprintf(user_fp,"End Of Users\n");
+    fclose(user_fp);
+    puts("Users saved.\n");
 }

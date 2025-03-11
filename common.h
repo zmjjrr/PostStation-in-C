@@ -61,6 +61,8 @@ void user_menu();
 
 void constructor();//程序启动时初始化链表
 void destructor();//程序结束时保存链表到文件
+void save_packages();
+void save_users();
 
 
 #endif

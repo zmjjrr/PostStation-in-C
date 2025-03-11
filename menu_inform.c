@@ -66,6 +66,7 @@ void admin_menu() {
         break;
     case 2:
         package_ctrl();
+        save_packages();
         break;
     case 3:
         // admin_revise(user_head);

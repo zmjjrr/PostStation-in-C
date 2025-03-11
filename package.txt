@@ -9,4 +9,15 @@ Receiver:zjr
 Info:oooi
 PACKAGE END
 
+PACKAGE BEGIN
+Id:111
+weight:33
+Transport:0
+Cost:0
+Status:1
+Sender:k
+Receiver:zzz
+Info:oopq
+PACKAGE END
+
 End Of Packages

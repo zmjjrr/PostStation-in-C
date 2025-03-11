@@ -18,4 +18,14 @@ Phone:00000000000
 Info:
 USER END
 
+USER BEGIN
+Userid:1
+Privilege:1
+Level:0
+Username:jjj
+Password:0ooO
+Phone:99999999999
+Info:
+USER END
+
 End Of Users
