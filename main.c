@@ -17,20 +17,14 @@ int main()
         case 1:
             cur_user = login();
             if (cur_user->privilege == 0) {
-                admin:
-                admin_menu();
-                if(cur_user){
-                    goto admin;
+                while(cur_user){
+                    admin_menu();
                 }
-                
             }
             else if (cur_user->privilege == 1) {
-                user:
-                user_menu();
-                if(cur_user){
-                    goto user;
+                while(cur_user){
+                    user_menu(); 
                 }
-                
             }
             break;
         case 2:

@@ -385,3 +385,5 @@ int keycheck(char* str)
     }
     return found;
 }
+
+

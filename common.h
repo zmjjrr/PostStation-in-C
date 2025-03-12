@@ -63,7 +63,6 @@ int package_ctrl();//包裹管理
 
 
 void inform_user(user*);//通知用户
-int pick_package();//用户取包裹
 void default_menu();
 void admin_menu();
 void user_menu();

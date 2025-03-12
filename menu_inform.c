@@ -9,6 +9,10 @@ extern user* cur_user;
 extern package* package_head;
 extern user* user_head;
 
+extern void queryPackage(package*);
+extern void admin_revise(user*);
+extern void user_revise(user*);
+
 void default_menu() {
     printf("***************************************\n");
     printf("\t欢迎使用菜鸟驿站系统\n");
@@ -63,16 +67,14 @@ void admin_menu() {
     scanf("%d", &choice);
     switch (choice) {
     case 1:
-        // queryPackage(package_head);
-        puts("under construction");
+        queryPackage(package_head);
         break;
     case 2:
         package_ctrl();
         save_packages();
         break;
     case 3:
-        // admin_revise(user_head);
-        puts("under construction");
+        admin_revise(user_head);
         break;
     case 4:
         cur_user = NULL;
@@ -105,8 +107,7 @@ void user_menu() {
         puts("under construction");
         break;
     case 3:
-        // user_revise(cur_user);
-        puts("under construction");
+        user_revise(cur_user);
         break;
     case 4:
         cur_user = NULL;
