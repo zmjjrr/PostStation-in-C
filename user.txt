@@ -3,7 +3,7 @@ Userid:1
 Privilege:1
 Level:0
 Username:user
-Password:User1
+Password:User12345
 Phone:00000000000
 Info:
 USER END
