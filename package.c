@@ -11,6 +11,15 @@ extern package* package_head;
 #define Package package
 #define next package_fd
 
+static void reassignIds(Package *head) {
+    int newId = 1;
+    Package *current = head;
+    while (current != NULL) {
+        current->id = newId;
+        newId++;
+        current = current->next;
+    }
+}
 // 创建新包裹节点
 Package* createPackage(int weight, const char* sender_name, const char* receiver_name,
     int transport, int cost, const char* info, int status) 
@@ -103,7 +112,42 @@ int getValidInt(int min, int max) {
         printf("输入超出范围，请输入 %d 到 %d 之间的整数。\n", min, max);
     }
 }
+// 删除包裹函数
+void deletePackage(Package **head) {
+    if (*head == NULL) {
+        printf("没有包裹信息，无法删除！\n");
+        return;
+    }
+    int id;
+    printf("请输入要删除的包裹 ID: ");
+    scanf("%d", &id);
+    while (getchar() != '\n');
 
+    Package *current = *head;
+    Package *previous = NULL;
+
+    // 查找要删除的包裹
+    while (current != NULL && current->id != id) {
+        previous = current;
+        current = current->next;
+    }
+
+    if (current == NULL) {
+        printf("未找到该包裹 ID，删除失败！\n");
+        return;
+    }
+
+    // 删除包裹
+    if (previous == NULL) {
+        *head = current->next;
+    } else {
+        previous->next = current->next;
+    }
+    free(current);
+    reassignIds(*head);
+    package_num--;
+    printf("包裹删除成功！\n");
+}
 void queryPackage(Package* head) {
     int choice;
     printf("请选择查询方式：\n");
@@ -253,10 +297,12 @@ int package_ctrl() {
         printf("\n=== 包裹管理系统 ===\n");
         printf("1. 添加包裹\n");
         printf("2. 查询包裹\n");
-        printf("3. 退出\n");
+        printf("3. 删除包裹\n");
+        printf("4. 退出\n");
         printf("请输入你的选择: ");
         scanf("%d", &choice);
-        while(getchar()!= '\n');
+        while (getchar() != '\n');
+
         switch (choice) {
         case 1:
             addPackage(&package_head);
@@ -265,13 +311,15 @@ int package_ctrl() {
             queryPackage(package_head);
             break;
         case 3:
+            deletePackage(&package_head);
+            break;
+        case 4:
             printf("退出系统！\n");
             break;
         default:
             printf("无效的选择，请重新输入！\n");
         }
-    } while (choice != 3);
+    } while (choice != 4);
 
-    
     return 0;
 }

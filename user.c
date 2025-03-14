@@ -10,6 +10,15 @@ static int postman_id = 1;
 
 #define next user_fd
 #define phone_str phone
+static void reassignIds(user *head) {
+    int newId = 1;
+    user *current = head;
+    while (current != NULL) {
+        current->userid = newId;
+        newId++;
+        current = current->next;
+    }
+}
 
 int is_username_duplicate(user* head, const char* username, user* current) {
     user* pi = head;
@@ -69,12 +78,13 @@ static user* password(user* newman) {
 // 完善用户信息
 user* perfect(user* newman) {
     printf("请输入君の名字o(*￣︶￣*)o（不超过 %d): ", MAX_NAME_LEN);
-    if (scanf("%9s", newman->username) != 1) {
-        while (getchar() != '\n');
-        printf("Invalid input for name.\n");
+    char namebuffer[MAX_NAME_LEN];
+    getValidString(namebuffer, MAX_NAME_LEN);
+    if(is_username_duplicate(user_head, namebuffer, newman)){
+        printf("用户名已存在，请重新输入\n");
         return NULL;
     }
-    while (getchar() != '\n');
+    strcpy(newman->username, namebuffer);
     password(newman);
     while (1) {
         int m = 0;
@@ -108,20 +118,6 @@ user* perfect(user* newman) {
     return newman;
 }
 
-// 分配用户ID
-int id(user* head, int m) {
-    user* p = head->user_fd;
-    int max_id = 0;
-    while (p) {
-        if (p->privilege == m) {
-            if (p->userid > max_id) {
-                max_id = p->userid;
-            }
-        }
-        p = p->user_fd;
-    }
-    return max_id + 1;
-}
 
 // 创建新用户并添加到链表中
 user* build(user* head) {
@@ -129,20 +125,14 @@ user* build(user* head) {
     int p;
     while (1) {
         printf("请输入你的身份(0:管理员,1:用户,2:快递员): ");
-        if (scanf("%d", &p) != 1) {
-            while (getchar() != '\n');
-            printf("错误！请输入以上数字\n");
-            continue;
-        }
-        while (getchar() != '\n');
+        p = getValidInt(0, 2);
         if (p == 0) {
             printf("请输入邀请码\n");
-            char s[33];
-            scanf("%32s", s);
-            while (getchar() != '\n');
+            char s[40];
+            getValidString(s, 35);
             if (keycheck(s)) {
                 newman->privilege = 0;
-                newman->userid = admin_id++;
+                newman->userid = ++user_num;
                 break;
             }
             else {
@@ -151,12 +141,12 @@ user* build(user* head) {
         }
         else if (p == 1) {
             newman->privilege = 1;
-            newman->userid = id(head, 1);
+            newman->userid = ++user_num;
             break;
         }
         else if (p == 2) {
             newman->privilege = 2;
-            newman->userid = id(head, 2);
+            newman->userid = ++user_num;
             break;
         }
         else {
@@ -165,27 +155,9 @@ user* build(user* head) {
     }
     newman = perfect(newman);
     if (newman == NULL) {
-        free(newman);
         return head;
     }
-    // 检查用户名是否重复
-    user* pi = head->user_fd;
-    while (pi) {
-        if (strcmp(pi->username, newman->username) == 0) {
-            printf("用户名重复,请修改：\n");
-            if (scanf("%9s", newman->username) != 1) {
-                while (getchar() != '\n');
-                printf("Invalid input for name.\n");
-                free(newman);
-                return head;
-            }
-            while (getchar() != '\n');
-            pi = head->user_fd; // 重新从头开始检查
-        }
-        else {
-            pi = pi->user_fd;
-        }
-    }
+
     newman->level = 0;
     newman->user_fd = NULL;
     head = add(head, newman);
@@ -321,7 +293,7 @@ user* _login(user* head) {
                 found = 1;
                 while (i < 3) {
                     printf("请输入密码: ");
-                    scanf("%20s", password);//????
+                    scanf("%20s", password);
                     while (getchar() != '\n');
                     if (strcmp(p->password, password) == 0) {
                         printf("欢迎登录\n");
@@ -348,4 +320,147 @@ user* _login(user* head) {
 user* login()
 {
     return _login(user_head);
+}
+
+void deleteUser(user **head) {
+    if (*head == NULL) {
+        printf("没有用户信息，无法删除！\n");
+        return;
+    }
+    int id;
+    printf("请输入要删除的用户 ID: ");
+    scanf("%d", &id);
+    while (getchar() != '\n');
+
+    user *current = *head;
+    user *prev = NULL;
+
+    while (current != NULL && current->userid != id) {
+        prev = current;
+        current = current->user_fd;
+    }
+
+    if (current == NULL) {
+        printf("未找到该用户 ID，删除失败！\n");
+        return;
+    }
+
+    if (prev == NULL) {
+        *head = current->user_fd;
+    } else {
+        prev->user_fd = current->user_fd;
+    }
+
+    free(current);
+    user_num--;
+    reassignIds(*head);
+    printf("用户删除成功！\n");
+}
+
+// 打印单个用户信息的函数
+void printUserInfo(user *current) {
+    printf("用户 ID: %d\n", current->userid);
+    printf("权限: %d\n", current->privilege);
+    printf("等级: %d\n", current->level);
+    printf("用户名: %s\n", current->username);
+    printf("密码: %s\n", current->password);
+    printf("手机号码: %s\n", current->phone);
+    printf("用户信息: %s\n", current->info);
+    printf("------------------------\n");
+}
+// 查询用户函数
+void queryUser(user *head) {
+    if (head == NULL) {
+        printf("没有用户信息！\n");
+        return;
+    }
+
+    int choice;
+    do {
+        printf("\n=== 用户查询菜单 ===\n");
+        printf("1. 显示全部用户\n");
+        printf("2. 根据 ID 查询\n");
+        printf("3. 根据用户名查询\n");
+        printf("4. 根据权限查询\n");
+        printf("5. 返回主菜单\n");
+        printf("请输入你的选择: ");
+        scanf("%d", &choice);
+        while (getchar() != '\n');
+
+        switch (choice) {
+            case 1: {
+                user *current = head;
+                while (current != NULL) {
+                    printUserInfo(current);
+                    current = current->user_fd;
+                }
+                break;
+            }
+            case 2: {
+                int id;
+                printf("请输入要查询的用户 ID: ");
+                scanf("%d", &id);
+                while (getchar() != '\n');
+
+                user *current = head;
+                int found = 0;
+                while (current != NULL) {
+                    if (current->userid == id) {
+                        printUserInfo(current);
+                        found = 1;
+                    }
+                    current = current->user_fd;
+                }
+                if (!found) {
+                    printf("未找到该用户 ID 的用户！\n");
+                }
+                break;
+            }
+            case 3: {
+                char username[MAX_NAME_LEN];
+                printf("请输入要查询的用户名: ");
+                scanf("%s", username);
+                while (getchar() != '\n');
+
+                user *current = head;
+                int found = 0;
+                while (current != NULL) {
+                    if (strcmp(current->username, username) == 0) {
+                        printUserInfo(current);
+                        found = 1;
+                    }
+                    current = current->user_fd;
+                }
+                if (!found) {
+                    printf("未找到该用户名的用户！\n");
+                }
+                break;
+            }
+            case 4: {
+                int privilege;
+                printf("请输入要查询的用户权限 (0: 管理员, 1: 用户, 2: 快递员): ");
+                scanf("%d", &privilege);
+                while (getchar() != '\n');
+
+                user *current = head;
+                int found = 0;
+                while (current != NULL) {
+                    if (current->privilege == privilege) {
+                        printUserInfo(current);
+                        found = 1;
+                    }
+                    current = current->user_fd;
+                }
+                if (!found) {
+                    printf("未找到该权限的用户！\n");
+                }
+                break;
+            }
+            case 5:
+                printf("返回主菜单！\n");
+                break;
+            default:
+                printf("无效的选择，请重新输入！\n");
+        }
+    } while (choice != 5);
 }

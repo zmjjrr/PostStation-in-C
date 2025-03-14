@@ -1,45 +1,12 @@
 PACKAGE BEGIN
 Id:1
-weight:10
-Transport:0
-Cost:10
-Status:1
-Sender:zjr
-Receiver:zjr
-Info:oooi
-PACKAGE END
-
-PACKAGE BEGIN
-Id:111
-weight:33
-Transport:0
-Cost:0
-Status:1
-Sender:k
-Receiver:zzz
-Info:oopq
-PACKAGE END
-
-PACKAGE BEGIN
-Id:0
 weight:11
-Transport:0
-Cost:1
+Transport:1
+Cost:550
 Status:1
-Sender:aaa
-Receiver:admin
-Info:111
-PACKAGE END
-
-PACKAGE BEGIN
-Id:4
-weight:19
-Transport:2
-Cost:100
-Status:1
-Sender:zjr
-Receiver:001
-Info:noinfo
+Sender:user
+Receiver:user
+Info:oopz
 PACKAGE END
 
 End Of Packages

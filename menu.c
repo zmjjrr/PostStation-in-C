@@ -63,7 +63,8 @@ void admin_menu() {
         save_packages();
         break;
     case 2:
-        admin_revise(user_head);
+        user_ctrl();
+        save_users();
         break;
     case 3:
         keygen(keystr);//pass a pointer to the char array
@@ -94,7 +95,7 @@ void user_menu() {
         inform_user(cur_user);
         break;
     case 2:
-        puts("under construction");
+        printUserInfo(cur_user);
         break;
     case 3:
         user_revise(cur_user, user_head);
@@ -105,4 +106,38 @@ void user_menu() {
     default:
         printf("无效操作，请重新输入！\n");
     }
+}
+             
+int user_ctrl() {
+    int choice;
+
+    do {
+        printf("\n=== 用户管理系统 ===\n");
+        printf("1. 查询用户\n");
+        printf("2. 删除用户\n");
+        printf("3. 修改用户信息\n");
+        printf("4. 退出\n");
+        printf("请输入你的选择: ");
+        scanf("%d", &choice);
+        while (getchar() != '\n');
+
+        switch (choice) {
+        case 1:
+            queryUser(user_head);
+            break;
+        case 2:
+            deleteUser(&user_head);
+            break;
+        case 3:
+            admin_revise(user_head);
+            break;
+        case 4:
+            printf("退出系统！\n");
+            break;
+        default:
+            printf("无效的选择，请重新输入！\n");
+        }
+    } while (choice != 4);
+
+    return 0;
 }

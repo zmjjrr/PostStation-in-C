@@ -18,6 +18,7 @@ int main()
         switch (choice) {
         case 1:
             cur_user = login();
+            if(!cur_user)break;
             if (cur_user->privilege == 0) {
                 while(cur_user){
                     admin_menu();

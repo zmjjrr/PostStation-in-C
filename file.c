@@ -127,7 +127,7 @@ void constructor()
 {
     CreateFile();//create file if not exist
 
-    puts("Initiating packages...\n");
+    // puts("Initiating packages...\n");
     FILE* package_fp = fopen("package.txt","r");
     package *package_ptr = package_head;
     package *newPackage = NULL;
@@ -155,9 +155,9 @@ void constructor()
         }
     }
     fclose(package_fp);
-    puts("Packages initiated.\n");
+    // puts("Packages initiated.\n");
 
-    puts("Initiating users...\n");
+    // puts("Initiating users...\n");
     FILE* user_fp = fopen("user.txt","r");
     user *user_ptr = user_head;
     user *newUser = NULL;
@@ -187,7 +187,7 @@ void constructor()
         }
     }
     fclose(user_fp);
-    puts("Users initiated.\n");
+    // puts("Users initiated.\n");
 
 }
 
@@ -236,7 +236,7 @@ void CreateFile()
 
 void save_packages()
 {
-    puts("Saving packages ...\n");
+    // puts("Saving packages ...\n");
     package *package_ptr = package_head;
 
     FILE* package_fp = fopen("package.txt","w");
@@ -254,12 +254,12 @@ void save_packages()
     }
     fprintf(package_fp,"End Of Packages\n");
     fclose(package_fp);
-    puts("Packages saved.\n");
+    // puts("Packages saved.\n");
 }
 
 void save_users()
 {
-    puts("Saving users...\n");
+    // puts("Saving users...\n");
     user *user_ptr = user_head;
 
     FILE* user_fp = fopen("user.txt","w");
@@ -277,7 +277,7 @@ void save_users()
     }
     fprintf(user_fp,"End Of Users\n");
     fclose(user_fp);
-    puts("Users saved.\n");
+    // puts("Users saved.\n");
 }
 
 

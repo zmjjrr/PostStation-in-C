@@ -55,12 +55,15 @@ int regist();//注册
 
 
 int package_ctrl();//包裹管理
-
+int user_ctrl();//用户管理
+void queryUser(user*);//查询用户
+void deleteUser(user**);//删除用户
 
 void inform_user(user*);//通知用户
 void default_menu();
 void admin_menu();
 void user_menu();
+void printUserInfo(user*);//打印用户信息
 
 void constructor();//程序启动时初始化链表
 void destructor();//程序结束时保存链表到文件
