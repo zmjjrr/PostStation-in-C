@@ -11,6 +11,16 @@ static int postman_id = 1;
 #define next user_fd
 #define phone_str phone
 
+int is_username_duplicate(user* head, const char* username, user* current) {
+    user* pi = head;
+    while (pi) {
+        if (pi != current && strcmp(pi->username, username) == 0) {
+            return 1;
+        }
+        pi = pi->user_fd;
+    }
+    return 0;
+}
 user* creat(void) {
     user* head;
     head = (user*)malloc(sizeof(user));
@@ -35,34 +45,23 @@ user* add(user* head, user* newman) {
 static user* password(user* newman) {
     while (1) {
         printf("告诉我你的密码(必须包含数字和大小写)\n");
-        scanf("%20s", newman->password);
-        while(getchar()!= '\n');
-        size_t len = strlen(newman->password);
-        if (len > 0 && newman->password[len - 1] == '\n') {
-            newman->password[len - 1] = '\0';
-        }
-        int i = 0, a = 0, b = 0, c = 0, d = 0;
-        for (i = 0; newman->password[i] != '\0'; i++) {
+        getValidString(newman->password, MAX_PASSWD_LEN);
+        int has_digit = 0, has_upper = 0, has_lower = 0, has_other = 0;
+        for (int i = 0; newman->password[i] != '\0'; i++) {
             if (isdigit(newman->password[i])) {
-                a++;
-            }
-            else if (isupper(newman->password[i])) {
-                b++;
-            }
-            else if (islower(newman->password[i])) {
-                c++;
-            }
-            else {
-                d++;
+                has_digit = 1;
+            } else if (isupper(newman->password[i])) {
+                has_upper = 1;
+            } else if (islower(newman->password[i])) {
+                has_lower = 1;
+            } else {
+                has_other = 1;
             }
         }
-        if (a != 0 && b != 0 && c != 0 && d == 0) {
+        if (has_digit && has_upper && has_lower && !has_other) {
             break;
         }
-        else {
-            printf("密码太逊了，再换个新的\n");
-            memset(newman->password, 0, sizeof(newman->password));
-        }
+        printf("密码太逊了，再换个新的\n");
     }
     return newman;
 }
@@ -202,53 +201,35 @@ int regist() {
 user* admin_revise(user* head) {
     char nameToModify[MAX_NAME_LEN];
     printf("请输入要修改信息的用户名: ");
-    scanf("%20s", nameToModify);
-    while (getchar() != '\n');
+    getValidString(nameToModify, MAX_NAME_LEN);
+
     user* current = head;
     while (current != NULL) {
         if (strcmp(current->username, nameToModify) == 0) {
             printf("找到用户，可进行如下修改：\n");
             printf("1. 修改名字\n");
             printf("2. 修改密码\n");
-            int choice;
-            while (1) {
-                printf("请选择要修改的项(1或2): ");
-                if (scanf("%d", &choice) != 1) {
-                    while (getchar() != '\n');
-                    printf("无效输入，请输入1或2。\n");
-                    continue;
-                }
-                while (getchar() != '\n');
-                if (choice == 1) {
+            int choice = getValidInt(1, 2);
+
+            switch (choice) {
+            case 1: {
+                char new_name[MAX_NAME_LEN];
+                while (1) {
                     printf("请输入新的名字(最多 %d 个字符): ", MAX_NAME_LEN);
-                    scanf("%9s", current->username);
-                    while (getchar() != '\n');
-                    user* pi = head;
-                    int m=0;
-                while (pi) {
-                    
-                    if (strcmp(pi->username, current->username) == 0) {
-                        printf("用户名重复,请修改：\n");
-                        m=1;
+                    getValidString(new_name, MAX_NAME_LEN);
+                    if (!is_username_duplicate(head, new_name, current)) {
+                        strcpy(current->username, new_name);
+                        printf("名字修改成功。\n");
+                        break;
                     }
-                    else {
-                        pi = pi->user_fd;
-                    }
+                    printf("用户名重复,请修改：\n");
                 }
-                if (m==1){
-                    break;
-                }
-                    printf("名字修改成功。\n");
-                    break;
-                }
-                else if (choice == 2) {
-                    password(current);
-                    printf("密码修改成功。\n");
-                    break;
-                }
-                else {
-                    printf("无效选择，请重新输入。\n");
-                }
+                break;
+            }
+            case 2:
+                password(current);
+                printf("密码修改成功。\n");
+                break;
             }
             return head;
         }
@@ -257,7 +238,7 @@ user* admin_revise(user* head) {
     printf("未找到指定用户名的用户。\n");
     return head;
 }
-void user_revise(user* userToModify) {
+void user_revise(user* userToModify, user* userHead) {
     if (userToModify == NULL) {
         printf("传入的用户指针为空，无法修改信息。\n");
         return;
@@ -269,54 +250,53 @@ void user_revise(user* userToModify) {
         printf("2. 修改密码\n");
         printf("3. 修改电话号码\n");
         printf("4. 退出修改\n");
-        printf("请选择要修改的项(1 - 4): ");
-        if (scanf("%d", &choice) != 1) {
-            while (getchar() != '\n');
-            printf("无效输入，请输入 1 - 4 的数字。\n");
-            continue;
-        }
-        while (getchar() != '\n');
+        choice = getValidInt(1, 4);
 
         switch (choice) {
-        case 1:
-            printf("请输入新的名字(最多 %d 个字符): ", MAX_NAME_LEN);
-            if (scanf("%9s", userToModify->username) != 1) {
-                while (getchar() != '\n');
-                printf("输入无效，名字未修改。\n");
-            }
-            else {
-                while (getchar() != '\n');
-                printf("名字修改成功。\n");
+        case 1: {
+            char new_name[MAX_NAME_LEN];
+            while (1) {
+                printf("请输入新的名字(最多 %d 个字符): ", MAX_NAME_LEN);
+                getValidString(new_name, MAX_NAME_LEN);
+                if (!is_username_duplicate(userHead, new_name, userToModify)) {
+                    strcpy(userToModify->username, new_name);
+                    printf("名字修改成功。\n");
+                    break;
+                }
+                printf("用户名重复,请修改：\n");
             }
             break;
+        }
         case 2:
             password(userToModify);
             printf("密码修改成功。\n");
             break;
-        case 3:
+        case 3: {
+            char new_phone[12];
             while (1) {
-                int m = 0;
                 printf("请输入新的电话号码: ");
-                if (scanf("%11s", userToModify->phone_str) != 1) {
-                    while (getchar() != '\n');
-                    printf("无效输入，请输入 11 位数字的电话号码。\n");
-                }
-                else {
+                getValidString(new_phone, sizeof(new_phone));
+                int valid = 1;
+                if (strlen(new_phone) != 11) {
+                    valid = 0;
+                } else {
                     for (int i = 0; i < 11; i++) {
-                        if (isdigit(userToModify->phone_str[i])) {
-                            m++;
+                        if (!isdigit(new_phone[i])) {
+                            valid = 0;
+                            break;
                         }
                     }
-                    if (m == 11) {
-                        printf("电话号码修改成功。\n");
-                        break;
-                    }
-                    else {
-                        printf("无效输入，请输入 11 位数字的电话号码。\n");
-                    }
+                }
+                if (valid) {
+                    strcpy(userToModify->phone, new_phone);
+                    printf("电话号码修改成功。\n");
+                    break;
+                } else {
+                    printf("无效输入，请输入 11 位数字的电话号码。\n");
                 }
             }
             break;
+        }
         case 4:
             printf("退出修改操作。\n");
             return;

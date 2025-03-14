@@ -6,6 +6,8 @@
 #define MAX_INFO_LEN 100
 #define MAX_PASSWD_LEN 20
 
+int user_num;
+int package_num;
 
 
 typedef struct package
@@ -44,8 +46,9 @@ typedef struct user
 }user;
 
 
-
-
+package* package_head;
+user* user_head;
+user* cur_user;
 
 user* login();//登录
 int regist();//注册
@@ -67,5 +70,9 @@ void save_users();
 int keycheck(char* str);
 int keygen(char* str);
 
+int getValidInt(int min, int max);
+void getValidString(char* str, int max_len);
 
+user* admin_revise(user* head);
+void user_revise(user* userToModify, user* userHead);
 #endif

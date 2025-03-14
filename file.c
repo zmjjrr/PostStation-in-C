@@ -30,6 +30,7 @@ static int readPackageFromFile(package *ptr,FILE* fp)
     {
         if(strstr(buffer,"Id:") != NULL){
             sscanf(buffer,"Id:%d",&ptr->id);
+            package_num++;
         }
         else if(strstr(buffer,"weight:")!= NULL){
             sscanf(buffer,"weight:%d",&ptr->weight); 
@@ -83,6 +84,7 @@ static int readUserFromFile(user *ptr,FILE* fp)
     {
         if(strstr(buffer,"Userid:")!= NULL){
             sscanf(buffer,"Userid:%d",&ptr->userid);
+            user_num++;
         } 
         else if(strstr(buffer,"Privilege:")!= NULL){
             sscanf(buffer,"Privilege:%d",&ptr->privilege); 
@@ -124,9 +126,6 @@ static int writeUserToFile(user *ptr,FILE* fp)
 void constructor()
 {
     CreateFile();//create file if not exist
-
-    // keygen();
-    printf("result:%d\n",keycheck("4oUGr34CyPKCDC1yZfG9htGP2fEHpMt8"));
 
     puts("Initiating packages...\n");
     FILE* package_fp = fopen("package.txt","r");

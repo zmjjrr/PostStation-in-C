@@ -4,13 +4,6 @@
 #include<stdlib.h>
 #include"common.h"
 
-extern user* cur_user;
-extern package* package_head;
-extern user* user_head;
-
-extern void queryPackage(package*);
-extern void admin_revise(user*);
-extern void user_revise(user*);
 
 void default_menu() {
     printf("***************************************\n");
@@ -55,32 +48,29 @@ void inform_user(user* u) {
 void admin_menu() {
     printf("***************************************\n");
     printf("\t管理员菜单\n");
-    printf("\t1.查看包裹进度\n");
-    printf("\t2.包裹管理系统\n");
-    printf("\t3.修改个人信息\n");
-    printf("\t4.注销\n");//注销
-    printf("\t5.生成邀请码\n");
+    printf("\t1.管理包裹\n");
+    printf("\t2.管理用户\n");
+    printf("\t3.生成邀请码\n");//注销
+    printf("\t4.注销\n");
     printf("***************************************\n");
     int choice = 0;
     char keystr[33];
     scanf("%d", &choice);
+    while (getchar() != '\n');
     switch (choice) {
     case 1:
-        queryPackage(package_head);
-        break;
-    case 2:
         package_ctrl();
         save_packages();
         break;
-    case 3:
+    case 2:
         admin_revise(user_head);
+        break;
+    case 3:
+        keygen(keystr);//pass a pointer to the char array
+        puts(keystr);
         break;
     case 4:
         cur_user = NULL;
-        break;
-    case 5:
-        keygen(keystr);//pass a pointer to the char array
-        puts(keystr);
         break;
     default:
         printf("无效操作，请重新输入！\n");
@@ -98,6 +88,7 @@ void user_menu() {
     printf("***************************************\n");
     int choice = 0;
     scanf("%d", &choice);
+    while (getchar()!= '\n');
     switch (choice) {
     case 1:
         inform_user(cur_user);
@@ -106,7 +97,7 @@ void user_menu() {
         puts("under construction");
         break;
     case 3:
-        user_revise(cur_user);
+        user_revise(cur_user, user_head);
         break;
     case 4:
         cur_user = NULL;

@@ -3,8 +3,8 @@ Userid:1
 Privilege:1
 Level:0
 Username:user
-Password:User12345
-Phone:00000000000
+Password:user
+Phone:11111111111
 Info:
 USER END
 
@@ -142,7 +142,7 @@ USER BEGIN
 Userid:6
 Privilege:1
 Level:0
-Username:ÕÅÈý
+Username:ï¿½ï¿½ï¿½ïaa8UU8
 Password:aa8UU8
 Phone:99999999999
 Info:
