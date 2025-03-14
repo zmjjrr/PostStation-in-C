@@ -12,7 +12,9 @@ int main()
         default_menu();
         int choice = 0;
         
+
         scanf("%d", &choice);
+        while (getchar() != '\n');
         switch (choice) {
         case 1:
             cur_user = login();

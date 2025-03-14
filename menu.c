@@ -3,7 +3,6 @@
 #include<string.h>
 #include<stdlib.h>
 #include"common.h"
-// #include"revise.h"
 
 extern user* cur_user;
 extern package* package_head;

@@ -48,4 +48,104 @@ Phone:99999999999
 Info:
 USER END
 
+USER BEGIN
+Userid:1
+Privilege:0
+Level:0
+Username:Admin
+Password:Admin1
+Phone:00000000000
+Info:
+USER END
+
+USER BEGIN
+Userid:2
+Privilege:0
+Level:0
+Username:pow
+Password:Pow1
+Phone:11111111112
+Info:
+USER END
+
+USER BEGIN
+Userid:2
+Privilege:1
+Level:0
+Username:Addd
+Password:Admin1
+Phone:11222222222
+Info:
+USER END
+
+USER BEGIN
+Userid:1
+Privilege:2
+Level:0
+Username:Awwwwwwww
+Password:Ad1o0
+Phone:11222222221
+Info:
+USER END
+
+USER BEGIN
+Userid:3
+Privilege:1
+Level:0
+Username:admin
+Password:opOp1
+Phone:11222222222
+Info:
+USER END
+
+USER BEGIN
+Userid:3
+Privilege:0
+Level:0
+Username:admin
+Password:Admin1
+Phone:11222222222
+Info:
+USER END
+
+USER BEGIN
+Userid:4
+Privilege:1
+Level:0
+Username:a........
+Password:0ooP
+Phone:99999999999
+Info:
+USER END
+
+USER BEGIN
+Userid:5
+Privilege:1
+Level:0
+Username:admin
+Password:oOOo2po3po
+Phone:11202020202
+Info:
+USER END
+
+USER BEGIN
+Userid:1
+Privilege:0
+Level:0
+Username:gly
+Password:Woshiguanliyuan123
+Phone:12312312312
+Info:
+USER END
+
+USER BEGIN
+Userid:6
+Privilege:1
+Level:0
+Username:ÕÅÈý
+Password:aa8UU8
+Phone:99999999999
+Info:
+USER END
+
 End Of Users

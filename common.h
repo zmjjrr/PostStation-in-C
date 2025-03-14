@@ -43,14 +43,6 @@ typedef struct user
     package packages[MAX_INFO_LEN];//一个用户所拥有的包裹
 }user;
 
-// typedef struct Key
-// {
-//     unsigned int id;
-//     char value[32];
-// }Key;
-
-
-
 
 
 

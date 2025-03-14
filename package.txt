@@ -20,4 +20,15 @@ Receiver:zzz
 Info:oopq
 PACKAGE END
 
+PACKAGE BEGIN
+Id:0
+weight:11
+Transport:0
+Cost:1
+Status:1
+Sender:aaa
+Receiver:admin
+Info:111
+PACKAGE END
+
 End Of Packages
