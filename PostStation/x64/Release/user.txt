@@ -1,0 +1,11 @@
+USER BEGIN
+Userid:1
+Privilege:0
+Level:0
+Username:admin
+Password:admin
+Phone:11111111111初始管理员
+Info:初始管理员
+USER END
+
+End Of Users

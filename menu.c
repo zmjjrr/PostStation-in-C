@@ -11,6 +11,7 @@ void default_menu() {
     printf("\t1.登录\n");
     printf("\t2.注册\n");
     printf("\t3.保存并退出\n");
+    printf("\t4.进入命令行界面\n");
     printf("***************************************\n");
 }
 
@@ -28,15 +29,7 @@ void inform_user(user* u) {
             break;
         have_package = 1;
         package* p = &(u->packages[i]);
-        printf("包裹ID： %d\n", p->id);
-        printf("重量：%d\n", p->weight);
-        printf("发件人：%s\n", p->sender_name);
-        printf("收件人：%s\n", p->receiver_name);
-        printf("运输方式：%d\n", p->transport);
-        printf("运费：%d元\n", p->cost);
-        printf("当前状态：%s\n", STATUS[p->status]);
-        printf("包裹信息：%s\n", p->info);
-        printf("==================================\n");
+        printPackageInfo(p);
     }
     if (!have_package) {
         printf("您当前没有快递记录\n");
@@ -50,27 +43,32 @@ void admin_menu() {
     printf("\t管理员菜单\n");
     printf("\t1.管理包裹\n");
     printf("\t2.管理用户\n");
-    printf("\t3.生成邀请码\n");//注销
-    printf("\t4.注销\n");
+    printf("\t3.查询历史记录\n");
+    printf("\t4.生成邀请码\n");//注销
+    printf("\t5.注销\n");
     printf("***************************************\n");
     int choice = 0;
     char keystr[33];
-    scanf("%d", &choice);
-    while (getchar() != '\n');
+    choice = getValidInt(1, 5);
     switch (choice) {
     case 1:
         package_ctrl();
-        save_packages();
+        record_history(cur_user->username, "管理包裹");
         break;
     case 2:
         user_ctrl();
         save_users();
+        record_history(cur_user->username, "管理用户");
         break;
     case 3:
-        keygen(keystr);//pass a pointer to the char array
-        puts(keystr);
+        find_history();
         break;
     case 4:
+        keygen(keystr);//pass a pointer to the char array
+        puts(keystr);
+        record_history(cur_user->username, "生成邀请码");
+        break;
+    case 5:
         cur_user = NULL;
         break;
     default:
@@ -83,24 +81,32 @@ void user_menu() {
     printf("***************************************\n");
     printf("\t欢迎用户%s\n", cur_user->username);
     printf("\t1.查看包裹\n");
-    printf("\t2.查看用户信息\n");
-    printf("\t3.修改用户信息\n");
-    printf("\t4.注销\n");
+    printf("\t2 寄出包裹\n");
+    printf("\t3.查看用户信息\n");
+    printf("\t4.修改用户信息\n");
+    printf("\t5.注销\n");
     printf("***************************************\n");
     int choice = 0;
-    scanf("%d", &choice);
-    while (getchar()!= '\n');
+    choice = getValidInt(1, 5);
     switch (choice) {
     case 1:
         inform_user(cur_user);
+        record_history(cur_user->username, "查询包裹");
         break;
     case 2:
-        printUserInfo(cur_user);
+        addPackage(&package_head);
+        record_history(cur_user->username, "寄出包裹");
+        save_packages();
         break;
     case 3:
-        user_revise(cur_user, user_head);
+        printUserInfo(cur_user);
         break;
     case 4:
+        user_revise(cur_user, user_head);
+        record_history(cur_user->username, "修改信息");
+        save_users();
+        break;
+    case 5:
         cur_user = NULL;
         break;
     default:
@@ -118,18 +124,20 @@ int user_ctrl() {
         printf("3. 修改用户信息\n");
         printf("4. 退出\n");
         printf("请输入你的选择: ");
-        scanf("%d", &choice);
-        while (getchar() != '\n');
+        choice = getValidInt(1, 99);
 
         switch (choice) {
         case 1:
             queryUser(user_head);
+            record_history(cur_user->username, "查询用户");
             break;
         case 2:
             deleteUser(&user_head);
+            record_history(cur_user->username, "删除用户");
             break;
         case 3:
             admin_revise(user_head);
+            record_history(cur_user->username, "修改信息");
             break;
         case 4:
             printf("退出系统！\n");
@@ -140,4 +148,69 @@ int user_ctrl() {
     } while (choice != 4);
 
     return 0;
+}
+
+// 快递员界面
+void postman_menu() {
+    printf("***************************************\n");
+    printf("\t快递员菜单\n");
+    printf("\t1. 取件\n");
+    printf("\t2. 入库\n");
+    printf("\t3. 查询\n");
+    printf("\t4. 查看用户信息\n");
+    printf("\t5. 修改用户信息\n");
+    printf("\t6. 退出登录\n");
+    printf("***************************************\n");
+
+    int choice = 0;
+    int found = 0;
+    int id = 0;
+    choice = getValidInt(1, 6);
+    char sender[MAX_NAME_LEN];
+    package* current = package_head;
+    strcpy(sender, cur_user->username);
+
+    switch (choice) {
+    case 1:
+        printf("请输入包裹id:");
+        id = getValidInt(1, package_num);
+        package* p = package_head;
+        while (p != NULL)
+        {
+            if (p->id == id)
+            {
+                pick_package(p);
+                break;
+            }
+            p = p->package_fd;
+        }
+        if (p == NULL)
+        {
+            printf("未找到该包裹\n");
+        }
+        save_packages();
+        record_history(cur_user->username, "取件");
+        break;
+    case 2:
+        store_package();
+        save_packages();
+        record_history(cur_user->username, "入库");
+        break;
+    case 3:
+        queryPackage(package_head,queryPackageMenu());
+        record_history(cur_user->username, "查询包裹");
+        break;
+    case 4:
+        printUserInfo(cur_user);
+        record_history(cur_user->username, "查询用户");
+        break;
+    case 5:
+        user_revise(cur_user,user_head);
+        break;
+    case 6:
+        cur_user = NULL;
+        break;
+    default:
+        printf("无效操作，请重新输入！\n");
+    }
 }

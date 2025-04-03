@@ -1,0 +1,31 @@
+PACKAGE BEGIN
+Id:1
+Weight:10.00
+Distance:1.00
+Volume:1.00
+Transport:1
+Cost:36.50
+Type:1
+Status:1
+T_status:2
+Sender:1
+Receiver:1
+Info:1
+PACKAGE END
+
+PACKAGE BEGIN
+Id:2
+Weight:1.00
+Distance:1.00
+Volume:1.00
+Transport:1
+Cost:20.70
+Type:1
+Status:1
+T_status:0
+Sender:zj
+Receiver:user
+Info:1
+PACKAGE END
+
+End Of Packages

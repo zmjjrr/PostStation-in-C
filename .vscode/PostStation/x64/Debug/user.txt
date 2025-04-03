@@ -1,0 +1,12 @@
+USER BEGIN
+Userid:1
+Privilege:0
+Total_cost:0.000000
+Level:0
+Username:admin
+Password:admin
+Phone:12102010201
+Info:
+USER END
+
+End Of Users

@@ -32,17 +32,29 @@ static int readPackageFromFile(package *ptr,FILE* fp)
             sscanf(buffer,"Id:%d",&ptr->id);
             package_num++;
         }
-        else if(strstr(buffer,"weight:")!= NULL){
-            sscanf(buffer,"weight:%d",&ptr->weight); 
+        else if(strstr(buffer,"Weight:")!= NULL){
+            sscanf(buffer,"Weight:%lf",&ptr->weight); 
+        }
+        else if (strstr(buffer, "Distance:") != NULL) {
+            sscanf(buffer, "Distance:%lf", &ptr->distance);
+        }
+        else if (strstr(buffer, "Volume:") != NULL) {
+            sscanf(buffer, "Volume:%lf", &ptr->volume);
         }
         else if(strstr(buffer,"Transport:")!= NULL){
             sscanf(buffer,"Transport:%d",&ptr->transport); 
         }
         else if(strstr(buffer,"Cost:")!= NULL){
-            sscanf(buffer,"Cost:%d",&ptr->cost);
+            sscanf(buffer,"Cost:%lf",&ptr->cost);
+        }
+        else if(strstr(buffer,"Type:")!= NULL){
+            sscanf(buffer,"Type:%d",&ptr->type);
         }
         else if(strstr(buffer,"Status:")!= NULL){
             sscanf(buffer,"Status:%d",&ptr->status);
+        }
+        else if(strstr(buffer,"T_status:")!= NULL){
+            sscanf(buffer,"T_status:%d",&ptr->T_status);
         }
         else if(strstr(buffer,"Sender:")!= NULL){
             sscanf(buffer,"Sender:%s",ptr->sender_name);
@@ -66,10 +78,14 @@ static int writePackageToFile(package *ptr,FILE* fp)
     
     fprintf(fp,"PACKAGE BEGIN\n");
     fprintf(fp,"Id:%d\n",ptr->id);
-    fprintf(fp,"weight:%d\n",ptr->weight);
+    fprintf(fp,"Weight:%.2f\n",ptr->weight);
+    fprintf(fp, "Distance:%.2f\n", ptr->distance);
+    fprintf(fp, "Volume:%.2f\n", ptr->volume);
     fprintf(fp,"Transport:%d\n",ptr->transport);
-    fprintf(fp,"Cost:%d\n",ptr->cost);
+    fprintf(fp,"Cost:%.2f\n",ptr->cost);
+    fprintf(fp,"Type:%d\n",ptr->type);
     fprintf(fp,"Status:%d\n",ptr->status);
+    fprintf(fp,"T_status:%d\n",ptr->T_status);
 
     fprintf(fp,"Sender:%s\n",ptr->sender_name);
     fprintf(fp,"Receiver:%s\n",ptr->receiver_name);
@@ -88,6 +104,9 @@ static int readUserFromFile(user *ptr,FILE* fp)
         } 
         else if(strstr(buffer,"Privilege:")!= NULL){
             sscanf(buffer,"Privilege:%d",&ptr->privilege); 
+        }
+        else if (strstr(buffer, "Total_cost:") != NULL) {
+            sscanf(buffer, "Total_cost:%lf", &ptr->total_cost);
         }
         else if(strstr(buffer,"Level:")!= NULL){
             sscanf(buffer,"Level:%d",&ptr->level); 
@@ -115,6 +134,7 @@ static int writeUserToFile(user *ptr,FILE* fp)
     fprintf(fp,"USER BEGIN\n");
     fprintf(fp,"Userid:%d\n",ptr->userid);
     fprintf(fp,"Privilege:%d\n",ptr->privilege);
+    fprintf(fp,"Total_cost:%lf\n", ptr->total_cost);
     fprintf(fp,"Level:%d\n",ptr->level);
 
     fprintf(fp,"Username:%s\n",ptr->username);
@@ -133,7 +153,12 @@ void constructor()
     package *newPackage = NULL;
     while(1)
     {
-        newPackage = (struct package *)malloc(sizeof(struct package));
+        newPackage = (struct package *)calloc(1,sizeof(struct package));
+        if (newPackage == NULL) {
+            perror("Memory allocation failed");
+            fclose(package_fp);
+            return;
+        }
         if(readPackageFromFile(newPackage,package_fp) == -1)
         {
             free(newPackage);//finished reading all packages
@@ -163,7 +188,7 @@ void constructor()
     user *newUser = NULL;
     while(1)
     {
-        newUser = (struct user *)malloc(sizeof(struct user));
+        newUser = (struct user *)calloc(1,sizeof(struct user));
         if(readUserFromFile(newUser,user_fp) == -1)
         {
             free(newUser);//finished reading all users

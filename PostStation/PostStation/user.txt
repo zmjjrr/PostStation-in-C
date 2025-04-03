@@ -1,0 +1,34 @@
+USER BEGIN
+Userid:1
+Privilege:1
+Total_cost:23.000000
+Level:4
+Username:user
+Password:user
+Phone:11111111111
+Info:iamuser1
+USER END
+
+USER BEGIN
+Userid:2
+Privilege:0
+Total_cost:0.000000
+Level:0
+Username:admin
+Password:Admin1
+Phone:11111111111
+Info:
+USER END
+
+USER BEGIN
+Userid:3
+Privilege:2
+Total_cost:0.000000
+Level:0
+Username:postman
+Password:Postman1
+Phone:12939393939
+Info:
+USER END
+
+End Of Users

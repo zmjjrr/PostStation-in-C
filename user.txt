@@ -1,30 +1,33 @@
 USER BEGIN
 Userid:1
 Privilege:1
-Level:0
+Total_cost:23.000000
+Level:4
 Username:user
 Password:user
 Phone:11111111111
-Info:
+Info:iamuser1
 USER END
 
 USER BEGIN
 Userid:2
 Privilege:0
+Total_cost:0.000000
 Level:0
 Username:admin
-Password:admin
-Phone:00000000000
+Password:Admin1
+Phone:11111111111
 Info:
 USER END
 
 USER BEGIN
 Userid:3
-Privilege:1
+Privilege:2
+Total_cost:0.000000
 Level:0
-Username:User3
-Password:User2
-Phone:12312312312
+Username:postman
+Password:Postman1
+Phone:12939393939
 Info:
 USER END
 

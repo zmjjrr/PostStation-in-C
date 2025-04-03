@@ -32,7 +32,7 @@ int is_username_duplicate(user* head, const char* username, user* current) {
 }
 user* creat(void) {
     user* head;
-    head = (user*)malloc(sizeof(user));
+    head = (user*)calloc(1,sizeof(user));
     head->next = NULL;
     return head;
 }
@@ -121,7 +121,7 @@ user* perfect(user* newman) {
 
 // 创建新用户并添加到链表中
 user* build(user* head) {
-    user* newman = (user*)malloc(sizeof(user));
+    user* newman = (user*)calloc(1,sizeof(user));
     int p;
     while (1) {
         printf("请输入你的身份(0:管理员,1:用户,2:快递员): ");
@@ -159,8 +159,10 @@ user* build(user* head) {
     }
 
     newman->level = 0;
+    newman->total_cost = 0;
     newman->user_fd = NULL;
     head = add(head, newman);
+    record_history(newman->username, "注册");
     return head;
 }
 
@@ -172,37 +174,13 @@ int regist() {
 
 user* admin_revise(user* head) {
     char nameToModify[MAX_NAME_LEN];
-    printf("请输入要修改信息的用户名: ");
-    getValidString(nameToModify, MAX_NAME_LEN);
+    printf("请输入要修改信息的用户的ID: ");
+    int id = getValidInt(1, user_num);
 
     user* current = head;
     while (current != NULL) {
-        if (strcmp(current->username, nameToModify) == 0) {
-            printf("找到用户，可进行如下修改：\n");
-            printf("1. 修改名字\n");
-            printf("2. 修改密码\n");
-            int choice = getValidInt(1, 2);
-
-            switch (choice) {
-            case 1: {
-                char new_name[MAX_NAME_LEN];
-                while (1) {
-                    printf("请输入新的名字(最多 %d 个字符): ", MAX_NAME_LEN);
-                    getValidString(new_name, MAX_NAME_LEN);
-                    if (!is_username_duplicate(head, new_name, current)) {
-                        strcpy(current->username, new_name);
-                        printf("名字修改成功。\n");
-                        break;
-                    }
-                    printf("用户名重复,请修改：\n");
-                }
-                break;
-            }
-            case 2:
-                password(current);
-                printf("密码修改成功。\n");
-                break;
-            }
+        if (current->userid == user_id) {
+            user_revise(current, head);
             return head;
         }
         current = current->user_fd;
@@ -221,8 +199,9 @@ void user_revise(user* userToModify, user* userHead) {
         printf("1. 修改名字\n");
         printf("2. 修改密码\n");
         printf("3. 修改电话号码\n");
-        printf("4. 退出修改\n");
-        choice = getValidInt(1, 4);
+        printf("4. 修改用户简介\n");
+        printf("5. 退出修改\n");
+        choice = getValidInt(1, 5);
 
         switch (choice) {
         case 1: {
@@ -230,9 +209,13 @@ void user_revise(user* userToModify, user* userHead) {
             while (1) {
                 printf("请输入新的名字(最多 %d 个字符): ", MAX_NAME_LEN);
                 getValidString(new_name, MAX_NAME_LEN);
+                char old_name[20];
+                strcpy(old_name, userToModify->username);
                 if (!is_username_duplicate(userHead, new_name, userToModify)) {
                     strcpy(userToModify->username, new_name);
                     printf("名字修改成功。\n");
+                    record_history(old_name, "被修改");
+                    record_history(new_name, "生成");
                     break;
                 }
                 printf("用户名重复,请修改：\n");
@@ -242,12 +225,13 @@ void user_revise(user* userToModify, user* userHead) {
         case 2:
             password(userToModify);
             printf("密码修改成功。\n");
+            record_history(userToModify, "修改密码");
             break;
         case 3: {
             char new_phone[12];
             while (1) {
                 printf("请输入新的电话号码: ");
-                getValidString(new_phone, sizeof(new_phone));
+                getValidString(new_phone, sizeof(new_phone)-1);
                 int valid = 1;
                 if (strlen(new_phone) != 11) {
                     valid = 0;
@@ -261,6 +245,7 @@ void user_revise(user* userToModify, user* userHead) {
                 }
                 if (valid) {
                     strcpy(userToModify->phone, new_phone);
+                    record_history(userToModify, "修改电话");
                     printf("电话号码修改成功。\n");
                     break;
                 } else {
@@ -270,6 +255,16 @@ void user_revise(user* userToModify, user* userHead) {
             break;
         }
         case 4:
+        {
+            char new_info[MAX_NAME_LEN];
+            printf("请输入新的用户简介(最多 %d 个字符): ", MAX_INFO_LEN);
+            getValidString(new_info, MAX_INFO_LEN);
+            strcpy(userToModify->info, new_info);
+            record_history(userToModify, "修改简介");
+            printf("用户简介修改成功。\n");
+            break;
+        }
+        case 5:
             printf("退出修改操作。\n");
             return;
         default:
@@ -284,8 +279,7 @@ user* _login(user* head) {
     int i = 0;
     while (1) {
         printf("请输入君の名: ");
-        scanf("%20s", name);
-        while (getchar() != '\n');
+        getValidString(name, MAX_NAME_LEN);
         p = head;
         int found = 0;
         while (p) {
@@ -293,8 +287,7 @@ user* _login(user* head) {
                 found = 1;
                 while (i < 3) {
                     printf("请输入密码: ");
-                    scanf("%20s", password);
-                    while (getchar() != '\n');
+                    getValidString(password, MAX_PASSWD_LEN);
                     if (strcmp(p->password, password) == 0) {
                         printf("欢迎登录\n");
                         return p;
@@ -311,7 +304,8 @@ user* _login(user* head) {
         }
 
         if (!found) {
-            printf("未找到该用户，请重新输入\n");
+            printf("未找到该用户\n");
+            return NULL;
         }
     }
 }
@@ -329,8 +323,7 @@ void deleteUser(user **head) {
     }
     int id;
     printf("请输入要删除的用户 ID: ");
-    scanf("%d", &id);
-    while (getchar() != '\n');
+    id = getValidInt(1, user_num);
 
     user *current = *head;
     user *prev = NULL;
@@ -345,12 +338,18 @@ void deleteUser(user **head) {
         return;
     }
 
+    if (current->privilege == 0)
+    {
+        printf("管理员账号无法删除!");
+        return;
+    }
+
     if (prev == NULL) {
         *head = current->user_fd;
     } else {
         prev->user_fd = current->user_fd;
     }
-
+    record_history(current->username, "delet");
     free(current);
     user_num--;
     reassignIds(*head);
@@ -384,8 +383,7 @@ void queryUser(user *head) {
         printf("4. 根据权限查询\n");
         printf("5. 返回主菜单\n");
         printf("请输入你的选择: ");
-        scanf("%d", &choice);
-        while (getchar() != '\n');
+        choice = getValidInt(1, 5);
 
         switch (choice) {
             case 1: {
@@ -399,8 +397,7 @@ void queryUser(user *head) {
             case 2: {
                 int id;
                 printf("请输入要查询的用户 ID: ");
-                scanf("%d", &id);
-                while (getchar() != '\n');
+                id = getValidInt(1, user_num);
 
                 user *current = head;
                 int found = 0;
@@ -419,8 +416,7 @@ void queryUser(user *head) {
             case 3: {
                 char username[MAX_NAME_LEN];
                 printf("请输入要查询的用户名: ");
-                scanf("%s", username);
-                while (getchar() != '\n');
+                getValidString(username, MAX_NAME_LEN);
 
                 user *current = head;
                 int found = 0;
@@ -439,8 +435,7 @@ void queryUser(user *head) {
             case 4: {
                 int privilege;
                 printf("请输入要查询的用户权限 (0: 管理员, 1: 用户, 2: 快递员): ");
-                scanf("%d", &privilege);
-                while (getchar() != '\n');
+                privilege = getValidInt(0, 2);
 
                 user *current = head;
                 int found = 0;
@@ -463,4 +458,22 @@ void queryUser(user *head) {
                 printf("无效的选择，请重新输入！\n");
         }
     } while (choice != 5);
+}
+void update_user_level(user* u) {
+    if (u->total_cost >= 500 && u->level < 4) {
+        u->level = 4;
+        printf("用户 %s 已升级到等级 4！\n", u->username);
+    }
+    else if (u->total_cost >= 300 && u->level < 3) {
+        u->level = 3;
+        printf("用户 %s 已升级到等级 3！\n", u->username);
+    }
+    else if (u->total_cost >= 150 && u->level < 2) {
+        u->level = 2;
+        printf("用户 %s 已升级到等级 2！\n", u->username);
+    }
+    else if (u->total_cost >= 50&& u->level < 1) {
+        u->level = 1;
+        printf("用户 %s 已升级到等级 1！\n", u->username);
+    }
 }
